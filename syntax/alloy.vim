@@ -65,7 +65,7 @@ syn match alloyQualName +\<[a-zA-Z]\(\w\|[_'"/]\)*+ contained
 
 syn match alloyNumber /-\=[1-9][0-9]*\>/
 
-syn match alloyLabel /^\s*[a-zA-Z]\(\w\|[_'"]\)*:/
+syn match alloyLabel /^\s*[a-zA-Z]\(\w\|[_'"]\)*:\ze\_s*\(run\|check\)/
 
 " Comments
 syn region alloyComment start="//" end="\n" contains=@Spell
