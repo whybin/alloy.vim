@@ -22,15 +22,16 @@ syn keyword alloyConstType   iden none univ
 " Operators
 syn match alloyOperator      /!/
 syn match alloyOperator      /#/
-syn match alloyOperator      /~/
+syn match alloyOperator      /\~/
 syn match alloyOperator      /*/
-syn match alloyOperator      /^/
+syn match alloyOperator      /\^/
 syn match alloyOperator      /+/
 syn match alloyOperator      /-/
 syn match alloyOperator      /\./
 syn match alloyOperator      /=/
 syn match alloyOperator      /</
 syn match alloyOperator      />/
+syn match alloyOperator      /&/
 syn match alloySingleTokenOp /=>/
 syn match alloySingleTokenOp /<=>/
 syn match alloySingleTokenOp />=/
