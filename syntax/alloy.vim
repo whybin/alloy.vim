@@ -7,15 +7,12 @@ if exists("b:current_syntax")
 endif
 
 " Keywords
-syn keyword alloyKeyword    abstract and as assert
-syn keyword alloyKeyword    but disj else exactly
-syn keyword alloyKeyword    extends fact for fun
-syn keyword alloyKeyword    iff implies in let
-syn keyword alloyKeyword    module not
-syn keyword alloyKeyword    open or pred
-syn keyword alloyKeyword    set sum
-syn keyword alloyQuantifier all some one lone no
-syn keyword alloyCommand    check run
+syn keyword alloyKeyword     abstract and assert but disj else exactly
+syn keyword alloyKeyword     fact for fun iff implies in let
+syn keyword alloyKeyword     not open or pred set sum
+
+syn keyword alloyQuantifier  all some one lone no
+syn keyword alloyCommand     check run
 syn keyword alloyBuiltinType int Int
 syn keyword alloyConstType   iden none univ
 
@@ -43,59 +40,105 @@ syn match alloySingleTokenOp /++/
 syn match alloySingleTokenOp /&&/
 syn match alloySingleTokenOp /||/
 
-syn match alloyDelimiter /:/
-syn match alloyBar       /|/
-syn match alloyBraces    /[{}]/
-syn match alloyBrackets  /[\[\]]/
-
-syn keyword alloyKeyword sig nextgroup=alloySigNames skipwhite skipempty
-syn match alloySigNames  /[^{]\+/ contained
-            \ contains=alloyKeyword,alloySigType,alloyQualName
-syn match alloySigType   /\<[a-zA-Z]\(\w\|[_'"]\)*/ contained 
+syn match alloyColon    /:/
+syn match alloyBar      /|/
+syn match alloyBraces   /[{}]/
+syn match alloyBrackets /[\[\]]/
 
 " Convention of keeping only types capitalized
 if get(g:, 'alloy_capitalize_types', 0)
     syn match alloyType /\<[A-Z]\(\w\|[_'"]\)*/
 endif
 
-syn keyword alloyThisNamespace this contained
-syn match alloyNamespaceDelim +/+ contained
-syn match alloyQualName +\<[a-zA-Z]\(\w\|[_'"/]\)*+ contained
-            \ contains=alloyThisNamespace,alloyNamespaceDelim
+" Names
+syn keyword alloyThisNamespace this contained nextgroup=alloyNamespaceDelim
+            \ skipwhite skipempty
+syn match alloyNamespaceDelim +\/+ contained nextgroup=alloyType
+            \ skipwhite skipempty
+syn match alloyType /\<\a\(\w\|[_'"]\)*/ contained nextgroup=@alloyAfterType
+            \ skipwhite skipempty
+syn match alloyCommaDelim /,/ contained nextgroup=@alloyQualName
+            \ skipwhite skipempty
+syn match alloyTypeUnionOp /+/ contained nextgroup=@alloyQualName
+            \ skipwhite skipempty
+syn cluster alloyAfterType
+            \ contains=alloyCommaDelim,alloyNamespaceDelim,alloyTypeUnionOp
+syn cluster alloyQualName contains=alloyType,alloyThisNamespace
+
+" Module
+syn keyword alloyModule module nextgroup=@alloyQualName skipwhite skipempty
+
+" Imports
+syn keyword alloyImport open nextgroup=alloyQualImport skipwhite skipempty
+" e.g. util/ordering
+syn match alloyQualImport /\<\a\(\w\|[_'"]\)*/
+            \ contained nextgroup=alloyQualDelim,alloyImportParams,alloyImportAs
+            \ skipwhite skipempty
+syn match alloyQualDelim +\/+ contained nextgroup=alloyQualImport
+            \ skipwhite skipempty
+syn region alloyImportParams matchgroup=alloyBrackets start=/\[/ end=/]/
+            \ contained contains=@alloyQualName,alloyCommaDelim
+            \ nextgroup=alloyImportAs skipwhite skipempty
+syn keyword alloyImportAs as contained nextgroup=alloyImportAlias
+            \ skipwhite skipempty
+syn match alloyImportAlias /\<\a\(\w\|[_'"]\)*/ contained
+
+" Sig
+syn keyword alloySig sig nextgroup=alloySigType skipwhite skipempty
+syn match alloySigType /\<\a\(\w\|[_'"]\)*/ contained
+            \ nextgroup=alloySigDelim,alloySigExt skipwhite skipempty
+syn match alloySigDelim /,/ contained nextgroup=alloySigType
+            \ skipwhite skipempty
+syn keyword alloySigExt extends in contained nextgroup=@alloyQualName
+            \ skipwhite skipempty
 
 syn match alloyNumber /-\=[1-9][0-9]*\>/
 
 syn match alloyLabel /^\s*[a-zA-Z]\(\w\|[_'"]\)*:\ze\_s*\(run\|check\)/
 
 " Comments
-syn region alloyComment start="//" end="\n" contains=@Spell
-syn region alloyComment start="--" end="\n" contains=@Spell
-syn region alloyComment start="/\*" end="\*/" contains=@Spell
+syn region alloyComment start="//" end="\n"   contains=@Spell containedin=ALL
+syn region alloyComment start="--" end="\n"   contains=@Spell containedin=ALL
+syn region alloyComment start="/\*" end="\*/" contains=@Spell containedin=ALL
 
-hi def link alloyQuantifier alloyKeyword
-hi def link alloyKeyword    Keyword
-hi def link alloyCommand    Function
+hi def link alloyQuantifier     alloyKeyword
+hi def link alloySig            alloyKeyword
+hi def link alloySigExt         alloyKeyword
+hi def link alloyImport         alloyKeyword
+hi def link alloyImportAs       alloyKeyword
+hi def link alloyModule         alloyKeyword
+hi def link alloyKeyword        Keyword
 
-hi def link alloyBuiltinType alloyType
-hi def link alloyConstType   alloyType
-hi def link alloyType        Type
+hi def link alloyQualImport     Include
+hi def link alloyImportAlias    Include
+hi def link alloyCommand        Function
 
-hi def link alloySingleTokenOp alloyOperator
-hi def link alloyOperator      Operator
+hi def link alloyBuiltinType    alloyType
+hi def link alloyConstType      alloyType
+hi def link alloyType           Type
 
-hi def link alloyDelimiter     Operator
-hi def link alloyBar           Function
-hi def link alloyBraces        Function
-hi def link alloyBrackets      Function
+hi def link alloySingleTokenOp  alloyOperator
+hi def link alloyTypeUnionOp    alloyOperator
+hi def link alloyOperator       Operator
 
-hi def link alloySigType       alloyType
-hi def link alloyUserType      alloyType
-hi def link alloyThisNamespace Identifier
-hi def link alloyQualName      alloyType
+hi def link alloyColon          alloyDelimiter
+hi def link alloyCommaDelim     alloyDelimiter
+hi def link alloyNamespaceDelim alloyDelimiter
+hi def link alloyQualDelim      alloyDelimiter
+hi def link alloySigDelim       alloyDelimiter
+hi def link alloyDelimiter      Delimiter
 
-hi def link alloyNumber Number
+hi def link alloyBar            Function
+hi def link alloyBraces         Function
+hi def link alloyBrackets       Function
 
-hi def link alloyLabel Label
+hi def link alloySigType        alloyType
+hi def link alloyThisNamespace  Identifier
+hi def link alloyQualName       alloyType
+
+hi def link alloyNumber         Number
+
+hi def link alloyLabel          PreProc
 
 hi def link alloyComment Comment
 
