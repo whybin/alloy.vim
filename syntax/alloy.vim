@@ -53,8 +53,9 @@ syn match alloySigNames  /[^{]\+/ contained
             \ contains=alloyKeyword,alloySigType,alloyQualName
 syn match alloySigType   /\<[a-zA-Z]\(\w\|[_'"]\)*/ contained 
 
-if get(g:, 'alloy_uppercase_types', 0)
-    syn match alloyUserType /\<[A-Z]\(\w\|[_'"]\)*/
+" Convention of keeping only types capitalized
+if get(g:, 'alloy_capitalize_types', 0)
+    syn match alloyType /\<[A-Z]\(\w\|[_'"]\)*/
 endif
 
 syn keyword alloyThisNamespace this contained
