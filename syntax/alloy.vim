@@ -97,9 +97,12 @@ syn match alloyNumber /-\=[1-9][0-9]*\>/
 syn match alloyLabel /^\s*[a-zA-Z]\(\w\|[_'"]\)*:\ze\_s*\(run\|check\)/
 
 " Comments
-syn region alloyComment start="//" end="\n"   contains=@Spell containedin=ALL
-syn region alloyComment start="--" end="\n"   contains=@Spell containedin=ALL
-syn region alloyComment start="/\*" end="\*/" contains=@Spell containedin=ALL
+syn region alloyComment start="//" end="$"    contains=@Spell
+            \ containedin=ALLBUT, alloyComment
+syn region alloyComment start="--" end="$"    contains=@Spell
+            \ containedin=ALLBUT, alloyComment
+syn region alloyComment start="/\*" end="\*/" contains=@Spell
+            \ containedin=ALLBUT, alloyComment
 
 hi def link alloyQuantifier     alloyKeyword
 hi def link alloySig            alloyKeyword
