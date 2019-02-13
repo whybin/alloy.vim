@@ -92,7 +92,7 @@ syn match alloySigDelim /,/ contained nextgroup=alloySigType
 syn keyword alloySigExt extends in contained nextgroup=@alloyQualName
             \ skipwhite skipempty
 
-syn match alloyNumber /-\=[1-9][0-9]*\>/
+syn match alloyNumber /\(\w\|['"]\)\@<!\zs-\?[1-9][0-9]*\>/
 
 syn match alloyLabel /^\s*[a-zA-Z]\(\w\|[_'"]\)*:\ze\_s*\(run\|check\)/
 
